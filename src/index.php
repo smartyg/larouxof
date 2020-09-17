@@ -1,5 +1,7 @@
 <?php
 
+namespace LaRouxOf;
+
 // We do not want anything to be sent to the client except a valid JSON response so buffer all output.
 ob_start("ob_gzhandler");
 
@@ -13,20 +15,7 @@ $uri = Functions::splitCall($_SERVER['REQUEST_URI']);
 $default_uri = "/Page/Welcome";
 if($uri == "") $uri = $default_uri;
 
-function load_class(string $link)
-{
-    $path = Functions::splitCall($link);
-    if(count($path) < 2) throw new Exception("URI must at least contain 2 elements.");
-    $class = $path[0];
-    $class_link = implode('/', array_slice($path, 1));
-    if(!class_exists($class)) throw new Exception("Class `" . $class . "` can not be found.");
-    $ifaces = class_implements($class);
-    if(!isset($ifaces['iWebpage'])) throw new Exception("Class `" . $class . "` does not implement the iWebpage interface.");
-    $obj = $class::loadByUI($class_link);
-    if(!is_object($obj) || !is_a($obj, $class)) throw new Exception($class . "::loadByUI() did not return an instance of `" . $class . "`.");
-    return $obj;
-}
-$page = load_class($uri);
+$page = Functions::LoadClass($uri);
 
 $navigation = new Navigation();
 

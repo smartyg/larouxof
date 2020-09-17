@@ -1,5 +1,7 @@
 <?php
 
+namespace LaRouxOf;
+
 final class Settings
 {
 	const DOMAIN_NAME = "www.larouxofgoedhart.com";

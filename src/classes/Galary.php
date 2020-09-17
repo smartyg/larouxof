@@ -1,6 +1,8 @@
 <?php
 
-final class Page implements iWebpage
+namespace LaRouxOf;
+
+final class Galery implements iWebpage
 {
 	private string $title;
 	private int $id;
@@ -31,7 +33,7 @@ final class Page implements iWebpage
 
 	public function isDynamicLoadable(): bool
 	{
-		return false;
+		return true;
 	}
 
 	public static function loadByUI(string $link): self
@@ -39,7 +41,7 @@ final class Page implements iWebpage
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
 		$conn = Database::connect();
-		$sql = "SELECT id, title, link FROM pages WHERE category = 'Page' AND link_name = :link";
+		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link_name = :link";
 		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -48,20 +50,32 @@ final class Page implements iWebpage
 		return $instance;
 	}
 
-	public static function loadPage(string $link): self
+	public static function loadGalery(string $link): self
 	{
 		return self::loadByUI($link);
 	}
 
 	public function toHTML(): string
 	{
+		return "";
+	}
+
+	public function getItems(int $start, int $number): ?array
+	{
 		$conn = Database::connect();
-		$sql = "SELECT content FROM content WHERE page_id = :id";
+		$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY id LIMIT :start, :number";
 		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		$sth->execute(array(':id' => $this->id));
+		$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
-		return $res[0]['content'];
+		if(count($res) > $number) throw Exception;
+		if(count($res) == 0) return null;
+		$items = array();
+		foreach($res as $row)
+		{
+			array_push($items, new Item($row));
+
+		}
+		return $items;
 	}
 }
 

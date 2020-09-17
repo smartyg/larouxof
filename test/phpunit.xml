@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<phpunit colors="true">
+	<testsuites>
+		<testsuite name="functions">
+			<directory suffix="Test.php">./functions</directory>
+		</testsuite>
+		<testsuite name="data-handling">
+			<directory suffix="Test.php">./data</directory>
+		</testsuite>
+		<testsuite name="api">
+			<directory suffix="Test.php">./api</directory>
+		</testsuite>
+		<testsuite name="website">
+			<directory suffix="Test.php">./website</directory>
+		</testsuite>
+	</testsuites>
+	<coverage includeUncoveredFiles="true"
+		processUncoveredFiles="true"
+		pathCoverage="true"
+		ignoreDeprecatedCodeUnits="false"
+		disableCodeCoverageIgnore="false">
+		<include>
+			<directory suffix=".php">../src</directory>
+		</include>
+	</coverage>
+</phpunit>

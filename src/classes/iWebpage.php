@@ -1,5 +1,7 @@
 <?php
 
+namespace LaRouxOf;
+
 interface iWebpage extends iLinkable
 {
 	public function getTitle(): string;

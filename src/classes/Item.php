@@ -1,5 +1,7 @@
 <?php
 
+namespace LaRouxOf;
+
 final class Item implements iLinkable
 {
 	private int $id;
@@ -59,7 +61,7 @@ final class Item implements iLinkable
 	{
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
-		return self::loadItem($path[0] . '/' . $path[1[);
+		return self::loadItem($path[0] . '/' . $path[1]);
 	}
 
 	public static function loadItem(string $page_link, string $link): self
@@ -89,7 +91,7 @@ final class Item implements iLinkable
 	{
 		return array(
 			'order_number' => $this->id,
-			'name' => $this->name.
+			'name' => $this->name,
 			'long_description' => $this->long_description,
 			'price' => $this->price,
 			'thumbernail' => $this->image_reference,

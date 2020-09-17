@@ -1,16 +1,23 @@
 <?php
 
-final class Galery implements iWebpage
+namespace LaRouxOf;
+
+final class Page implements iWebpage
 {
 	private string $title;
 	private int $id;
 	private string $link;
+	private PDO $connection;
 
-	function __construct(int $id, string $title, string $link)
+	function __construct(int $id, string $title, string $link, $connection = null)
 	{
 		$this->id = $id;
 		$this->title = $title;
 		$this->link = $link;
+		if($connection == null)
+			$this->connection = Database::connect();
+		else
+			$this->connection = $connection;
 	}
 
 	public function getLink(): string
@@ -31,15 +38,15 @@ final class Galery implements iWebpage
 
 	public function isDynamicLoadable(): bool
 	{
-		return true;
+		return false;
 	}
 
 	public static function loadByUI(string $link): self
 	{
-		$path = Functions::splitCalls($link);
+		$path = Functions::splitCall($link);
 		if(count($path) != 1) throw new Exception();
 		$conn = Database::connect();
-		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link_name = :link";
+		$sql = "SELECT id, title, link FROM pages WHERE category = 'Page' AND link_name = :link";
 		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -48,32 +55,19 @@ final class Galery implements iWebpage
 		return $instance;
 	}
 
-	public static function loadGalery(string $link): self
+	public static function loadPage(string $link): self
 	{
 		return self::loadByUI($link);
 	}
 
 	public function toHTML(): string
 	{
-		return "";
-	}
-
-	public function getItems(int $start, int $number): ?array
-	{
-		$conn = Database::connect();
-		$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY id LIMIT :start, :number";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number));
+		$sql = "SELECT content FROM content WHERE page_id = :id";
+		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth->execute(array(':id' => $this->id));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) > $number) throw Exception;
-		if(count($res) = 0) return null;
-		$items = array();
-		foreach($res as $row)
-		{
-			array_push($items, new Item($row));
-
-		}
-		return $items;
+		if(count($res) != 1) throw Exception;
+		return $res[0]['content'];
 	}
 }
 
