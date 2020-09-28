@@ -2,6 +2,8 @@
 
 namespace LaRouxOf;
 
+use PDO;
+
 final class Navigation
 {
 	private PDO $connection;
