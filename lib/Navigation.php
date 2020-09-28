@@ -16,7 +16,7 @@ final class Navigation
 		$result = $this->connection->query($sql);
 		if($result === false)
 		{
-			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+			echo "\nPDO error: " . $this->connection->errorCode() . "\n" . $this->connection->errorInfo()[2];
 		}
 		foreach($result as $p)
 		{
