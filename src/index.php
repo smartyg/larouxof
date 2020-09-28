@@ -15,9 +15,9 @@ function autoloader(string $class) {
 }
 spl_autoload_register(__NAMESPACE__ . '\autoloader');
 
-$uri = Functions::splitCall($_SERVER['REQUEST_URI']);
+$uri = $_SERVER['REQUEST_URI'];
 $default_uri = "/Page/Welcome";
-if($uri == "") $uri = $default_uri;
+if($uri == "/") $uri = $default_uri;
 
 $page = Functions::LoadClass(Database::connect(), $uri);
 
