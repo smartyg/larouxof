@@ -4,7 +4,7 @@ namespace LaRouxOf;
 
 use PDO;
 
-final class Galery implements iWebpage
+final class Gallery implements iWebpage
 {
 	private string $title;
 	private int $id;
@@ -44,7 +44,7 @@ final class Galery implements iWebpage
 	{
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
-		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link = :link";
+		$sql = "SELECT id, title, link FROM pages WHERE category = 'Gallery' AND link = :link";
 		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		if($sth === false)
 		{
@@ -57,7 +57,7 @@ final class Galery implements iWebpage
 		return $instance;
 	}
 
-	public static function loadGalery(PDO $connection, string $link): self
+	public static function loadGallery(PDO $connection, string $link): self
 	{
 		return self::loadByUI($connection, $link);
 	}

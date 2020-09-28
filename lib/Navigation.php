@@ -21,7 +21,8 @@ final class Navigation
 		$this->pages = array();
 		foreach($result as $p)
 		{
-			array_push($this->pages, new $p['category']($p['id'], $p['title'], $p['link']));
+			$class = __NAMESPACE__ . '\\' . $p['category'];
+			array_push($this->pages, new $class($p['id'], $p['title'], $p['link']));
 		}
 	}
 

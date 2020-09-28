@@ -4,8 +4,8 @@ namespace LaRouxOf;
 
 # larouxof.ph/api/Page/Welcome/getcontent
 # larouxof.ph/api/Page/Ordering/getcontent
-# larouxof.ph/api/Galary/Bags/getItems/0/10
-# larouxof.ph/api/Galary/Shoes/getItems/20/10
+# larouxof.ph/api/Gallery/Bags/getItems/0/10
+# larouxof.ph/api/Gallery/Shoes/getItems/20/10
 # larouxof.ph/api/Item/Bags/bag-1/getItem
 # larouxof.ph/api/Item/Bags/bag-3/getItem
 # larouxof.ph/api/Item/Bags/bag-3/getImage/0

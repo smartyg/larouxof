@@ -6,7 +6,7 @@ require_once __DIR__ . "/../../vendor/autoload.php";
 require_once __DIR__ . "/../../src/classes/iLinkable.php";
 require_once __DIR__ . "/../../src/classes/iWebpage.php";
 require_once __DIR__ . "/../../src/classes/Page.php";
-require_once __DIR__ . "/../../src/classes/Galary.php";
+require_once __DIR__ . "/../../src/classes/Gallery.php";
 require_once __DIR__ . "/../../src/classes/Item.php";
 require_once __DIR__ . "/../../src/classes/Database.php";
 require_once __DIR__ . "/../../src/classes/Functions.php";
