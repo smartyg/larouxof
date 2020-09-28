@@ -2,6 +2,8 @@
 
 namespace LaRouxOf;
 
+use PDO;
+
 class TestClass implements iWebpage
 {
 	private string $link;
@@ -31,14 +33,14 @@ class TestClass implements iWebpage
 		return true;
 	}
 
-	public static function loadByUI(string $link): self
+	public static function loadByUI(PDO $conn, string $link): self
 	{
 		return new self($link);
 	}
 
-	public static function loadTestClass(string $link): self
+	public static function loadTestClass(PDO $conn, string $link): self
 	{
-		return self::loadByUI($link);
+		return self::loadByUI($conn, $link);
 	}
 
 	public function toHTML(): string

@@ -5,19 +5,23 @@ namespace LaRouxOf;
 // We do not want anything to be sent to the client except a valid JSON response so buffer all output.
 ob_start("ob_gzhandler");
 
+error_reporting(E_ALL);
+
 // Enable autoloading of classes.
-function my_autoloader($class) {
-    include 'classes/' . $class . '.php';
+function autoloader(string $class) {
+	$file = str_replace(__NAMESPACE__ . '\\', '../lib/', $class);
+	$file = str_replace('\\', '/', $file);
+	include $file . '.php';
 }
-spl_autoload_register('my_autoloader');
+spl_autoload_register(__NAMESPACE__ . '\autoloader');
 
 $uri = Functions::splitCall($_SERVER['REQUEST_URI']);
 $default_uri = "/Page/Welcome";
 if($uri == "") $uri = $default_uri;
 
-$page = Functions::LoadClass($uri);
+$page = Functions::LoadClass(Database::connect(), $uri);
 
-$navigation = new Navigation();
+$navigation = new Navigation(Database::connect());
 
 ob_clean();
 

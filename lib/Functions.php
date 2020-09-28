@@ -3,6 +3,7 @@
 namespace LaRouxOf;
 
 use ReflectionClass;
+use PDO;
 /*
 * This class contains all static (helper) functions.
 */
@@ -24,7 +25,7 @@ abstract class Functions
 		return $path;
 	}
 
-	final public static function executeCall(array $path)
+	final public static function executeCall(PDO $connection, array $path)
 	{
 		try
 		{
@@ -40,10 +41,13 @@ abstract class Functions
 			$reflect_method = $reflect->getMethod($method);
 			// Make sure the method is static, as we do not have an initialized object yet.
 			if(!$reflect_method->isStatic()) throw new \Exception($class . "::" . $method . " is not a static method.");
-			$n_param = $reflect_method->getNumberOfRequiredParameters();
+			// Substract one from the count as this is the PDO object that is provided seperately.
+			$n_param = $reflect_method->getNumberOfRequiredParameters() - 1;
 			// The next $n_param are needed to initialize the main class (only the number of required parameters will be passed, any other parameters will get there default value).
 			$args = array_slice($path, 1, $n_param);
-			if(count($args) < $n_param) throw new \Exception($class . "::" . $method . " requires at least " . $n_obj_param . " arguments, only " . count($args) . " are given.");
+			// Prepend the connection object to the beginning of the argument array, also save the number of new items
+			$n_args = array_unshift($args, $connection);
+			if($n_args < $n_param) throw new \Exception($class . "::" . $method . " requires at least " . $n_obj_param . " arguments, only " . count($args) . " are given.");
 			// Here we really call the load method of the main class with the correct number of arguments.
 			$obj = $reflect_method->invokeArgs(null, $args);
 
@@ -70,7 +74,7 @@ abstract class Functions
 		}
 	}
 
-	final public static function loadClass(string $link)
+	final public static function loadClass(PDO $connection, string $link)
 	{
 		$path = Functions::splitCall($link);
 		if(count($path) < 2) throw new \Exception("URI must at least contain 2 elements.");
@@ -79,7 +83,7 @@ abstract class Functions
 		if(!class_exists($class)) throw new \Exception("Class `" . $class . "` can not be found.");
 		$ifaces = class_implements($class);
 		if(!isset($ifaces['LaRouxOf\iWebpage'])) throw new \Exception("Class `" . $class . "` does not implement the iWebpage interface.");
-		$obj = $class::loadByUI($class_link);
+		$obj = $class::loadByUI($connection, $class_link);
 		if(!is_object($obj) || !is_a($obj, $class)) throw new \Exception($class . "::loadByUI() did not return an instance of `" . $class . "`.");
 		return $obj;
 	}

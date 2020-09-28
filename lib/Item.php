@@ -2,6 +2,8 @@
 
 namespace LaRouxOf;
 
+use PDO;
+
 final class Item implements iLinkable
 {
 	private int $id;
@@ -13,8 +15,9 @@ final class Item implements iLinkable
 	private string $link;
 	private string $page_link;
 	private string $page_title;
+	private PDO $connection;
 
-	function __construct(array $input)
+	function __construct(array $input, PDO $connection)
 	{
 		if(!isset($input['id'])) throw Exception;
 		if(!isset($input['name'])) throw Exception;
@@ -34,6 +37,7 @@ final class Item implements iLinkable
 		$this->link = $input['link'];
 		$this->page_link = $input['page_link'];
 		$this->page_title = $input['page_title'];
+		$this->connection = $connection;
 	}
 
 	public function getLink(): string
@@ -57,22 +61,21 @@ final class Item implements iLinkable
 		return false;
 	}
 
-	public static function loadByUI($link): self
+	public static function loadByUI(PDO $connection, string $link): self
 	{
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
-		return self::loadItem($path[0] . '/' . $path[1]);
+		return self::loadItem($path[0], $path[1], $connection);
 	}
 
-	public static function loadItem(string $page_link, string $link): self
+	public static function loadItem(PDO $connection, string $page_link, string $link): self
 	{
-		$conn = Database::connect();
 		$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE pages.link = :page_link AND items.link = :link";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':page_link' => $page_link, ':link' => $link));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) != 1) throw Exception;
-		$instance = new self($res[0]);
+		$instance = new self($connection, $res[0]);
 		return $instance;
 	}
 
@@ -101,12 +104,11 @@ final class Item implements iLinkable
 
 	public function getImage(int $number): string
 	{
-		$conn = Database::connect();
 		$sql = "SELECT image_reference FROM images WHERE item_id = :id ORDER BY image_reference LIMIT :start, 1";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':id' => $id, ':start' => $number));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
+		if(count($res) != 1) throw new Exception();
 		return $res[0]['image_reference'];
 	}
 
@@ -117,12 +119,11 @@ final class Item implements iLinkable
 
 	public function getNumOfImage(): int
 	{
-		$conn = Database::connect();
 		$sql = "SELECT count(image_reference) as number FROM images WHERE item_id = :id";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':id' => $id));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
+		if(count($res) != 1) throw new Exception();
 		return $res[0]['number'];
 	}
 

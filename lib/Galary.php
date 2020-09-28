@@ -2,17 +2,21 @@
 
 namespace LaRouxOf;
 
+use PDO;
+
 final class Galery implements iWebpage
 {
 	private string $title;
 	private int $id;
 	private string $link;
+	private PDO $connection;
 
-	function __construct(int $id, string $title, string $link)
+	function __construct(int $id, string $title, string $link, PDO $connection)
 	{
 		$this->id = $id;
 		$this->title = $title;
 		$this->link = $link;
+		$this->connection = $connection;
 	}
 
 	public function getLink(): string
@@ -36,23 +40,22 @@ final class Galery implements iWebpage
 		return true;
 	}
 
-	public static function loadByUI(string $link): self
+	public static function loadByUI(PDO $connection, string $link): self
 	{
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
-		$conn = Database::connect();
 		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link_name = :link";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) != 1) throw Exception;
-		$instance = new self($res[0]['id'], $res[0]['title'], $res[0]['link']);
+		$instance = new self($res[0]['id'], $res[0]['title'], $res[0]['link'], $connection);
 		return $instance;
 	}
 
-	public static function loadGalery(string $link): self
+	public static function loadGalery(PDO $connection, string $link): self
 	{
-		return self::loadByUI($link);
+		return self::loadByUI($connection, $link);
 	}
 
 	public function toHTML(): string
@@ -60,12 +63,14 @@ final class Galery implements iWebpage
 		return "";
 	}
 
-	public function getItems(int $start, int $number): ?array
+	public function loadItems(int $start = 0, int $number = 10, string $sort = "id", string $order = "ASC"): ?array
 	{
-		$conn = Database::connect();
-		$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY id LIMIT :start, :number";
-		$sth = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number));
+		if(!in_array($sort, array('id', 'name', 'price'))) $sort = 'id';
+		if(!in_array($order, array('ASC', 'DESC'))) $order = 'ASC';
+
+		$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY :column :order LIMIT :start, :number";
+		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number, ':column' => $sort, ':order' => $order));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) > $number) throw Exception;
 		if(count($res) == 0) return null;
@@ -73,7 +78,6 @@ final class Galery implements iWebpage
 		foreach($res as $row)
 		{
 			array_push($items, new Item($row));
-
 		}
 		return $items;
 	}

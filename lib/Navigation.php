@@ -2,13 +2,14 @@
 
 final class Navigation
 {
+	private PDO $connection;
 	private array $pages;
 
-	function __construct()
+	function __construct(PDO $connection)
 	{
-		$conn = Database::connect();
+		$this->connection = $connection;
 		$sql = "SELECT id, title, category, link FROM pages ORDER BY id";
-		$result = $conn->query($sql);
+		$result = $this->connection->query($sql);
 		foreach($result as $p)
 		{
 			array_push($this->pages, new $p['category']($p['id'], $p['title'], $p['link']));

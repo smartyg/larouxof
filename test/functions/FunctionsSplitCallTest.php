@@ -1,23 +1,21 @@
 <?php
 namespace LaRouxOf\Test;
 
-require __DIR__ . "/../../vendor/autoload.php";
-#require __DIR__ . "/../../src/settings.php";
-require __DIR__ . "/../../src/classes/iLinkable.php";
-require __DIR__ . "/../../src/classes/iWebpage.php";
-require __DIR__ . "/../../src/classes/Page.php";
-require __DIR__ . "/../../src/classes/Galary.php";
-require __DIR__ . "/../../src/classes/Item.php";
-require __DIR__ . "/../../src/classes/Database.php";
-require __DIR__ . "/../../src/classes/Functions.php";
+require_once __DIR__ . "/../../vendor/autoload.php";
+#require_once __DIR__ . "/../../src/settings.php";
+require_once __DIR__ . "/../../src/classes/iLinkable.php";
+require_once __DIR__ . "/../../src/classes/iWebpage.php";
+require_once __DIR__ . "/../../src/classes/Page.php";
+require_once __DIR__ . "/../../src/classes/Galary.php";
+require_once __DIR__ . "/../../src/classes/Item.php";
+require_once __DIR__ . "/../../src/classes/Database.php";
+require_once __DIR__ . "/../../src/classes/Functions.php";
 
-require __DIR__ . "/FunctionsClass.php";
+require_once __DIR__ . "/FunctionsClass.php";
 
 use LaRouxOf\Functions;
-#use LaRouxOf\TestClass;
-use LaRouxOf\Page;
 
-class TestFunctions extends \PHPUnit\Framework\TestCase
+class TestFunctionsSplitCall extends \PHPUnit\Framework\TestCase
 {
 	public function testFunctionsSplitCall1()
 	{
@@ -137,40 +135,6 @@ class TestFunctions extends \PHPUnit\Framework\TestCase
 		$this->assertIsArray($result);
 		$this->assertCount($num_expect, $result);
 		$this->assertEquals($expect, $result);
-	}
-
-	public function testFunctionsExecuteCall1()
-	{
-		$expect[] = 'TestClass';
-		$expect[] = 'test';
-		$expect[] = 'concatenate';
-		$expect[] = 'String';
-		$result = Functions::executeCall($expect);
-
-		$this->assertIsString($result);
-		$this->assertEquals($expect[1] . $expect[3], $result);
-	}
-
-	public function testFunctionsLoadClass1()
-	{
-		$str = '/TestClass/test';
-		$result = Functions::loadClass($str);
-		$expect = 'test';
-
-		$this->assertIsObject($result);
-		$this->assertEquals('LaRouxOf\TestClass', get_class($result));
-		$this->assertEquals($expect, $result->toHTML());
-	}
-
-	public function testFunctionsLoadClass2()
-	{
-		$str = '/Page/test';
-		$result = Functions::loadClass($str);
-		$expect = 'test';
-
-		$this->assertIsObject($result);
-		$this->assertEquals('LaRouxOf\Page', get_class($result));
-		$this->assertEquals($expect, $result->toHTML());
 	}
 }
 ?>

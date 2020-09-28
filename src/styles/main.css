@@ -1,9 +1,11 @@
+/* General */
+
 * {
 	margin: 0;
 	border: 0;
 	padding: 0;
-	font-family: sans-serif;
-	font-size: medium;
+	font-size: small;
+	font-family: CarlitoRegular;
 }
 
 body {
@@ -15,10 +17,25 @@ a {
 	color: inherit;
 }
 
+/* Page header */
+
 header {
 	background-color: #9E9E9E;
 	height: 200px;
 }
+
+h1 {
+	font-family: Clayborn;
+	font-size: xx-large;
+	display: inline-block;
+	position: relative;
+	left: calc(50% - 3em);
+	width: 6em;
+	text-align: center;
+	top: 1.3em;
+}
+
+/* Navigation */
 
 nav {
 	background-color: #e3e3e3;
@@ -50,6 +67,8 @@ nav > h4:hover {
 	background-color: #d0d0d0;
 }
 
+/* Main section */
+
 section {
 	display: inline-block;
 	flex-grow: 0;
@@ -66,9 +85,92 @@ section > h2 {
 	padding-top: 10px;
 }
 
-section > article {
+/* Controls */
+
+
+div.button {
+	text-align: center;
+	margin: 10px 0 20px 0;
+}
+
+div.top {
+	text-align: right;
+	padding-right: 2em;
+}
+
+div.button > * {
+	vertical-align: middle;
 	display: inline-block;
-	width: 250px;
+}
+
+.button p {
+	border-radius: 4px;
+	border-color: #989898;
+	border-style: outset;
+	border-width: 1px;
+	padding: 15px;
+	background: #e9e9e9;
+	font-size: large;
+	font-variant: all-small-caps;
+}
+
+
+.button select {
+	background-color: #f2f2f2;
+	border: 1px solid black;
+	border-radius: 4px;
+	padding: 2px;
+}
+
+div.sorting {
+	margin-right: 0.5em;
+}
+
+.sorting svg {
+	height: 11px;
+	width: 18px;
+	display: block;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+.sorting svg.arrow-down {
+	padding-top: 3px;
+}
+
+.sorting svg > polygon {
+	stroke: black;
+	stroke-width: 1.4;
+	fill: transparent;
+}
+
+.sorting svg > polygon:hover, .sorting svg.active > polygon {
+	fill: #000000;
+}
+
+.view-switch {
+	height: 25px;
+	width: 25px;
+}
+
+.view-switch > * {
+	fill: black;
+}
+
+.view-switch > line {
+	stroke: black;
+	stroke-width: 2;
+}
+
+.view-switch > rect {
+	fill: transparent;
+	stroke: black;
+	stroke-width: 2;
+}
+
+/* article */
+
+article {
 	background-color: #e8e8e8;
 	margin: 15px;
 	border: 1px outset #a0a0a0;
@@ -76,32 +178,73 @@ section > article {
 	padding: 1px;
 }
 
-.item {
+.view-grid article {
+	display: inline-block;
+	width: 250px;
+}
+
+.view-list article {
 	display: block;
-	text-align: center;
+}
+
+article > * {
 	margin: 10px 0 10px 0;
 }
 
-img.item {
-	position: relative;
-	width: 150px;
-	height: 150px;
-	left: 50px;
+.view-grid article > * {
+	display: block;
+	text-align: center;
+
+}
+
+.view-list article > * {
+	display: inline-block;
+	margin-right: 1em;
+	vertical-align: middle;
+}
+
+
+article img {
 	padding: 10px;
 	margin: 0;
 }
 
-h3.item {
+.view-grid article img {
+	position: relative;
+	width: 150px;
+	height: 150px;
+	left: 50px;
 }
 
-p.item {
+.view-list article img {
+	width: 50px;
+	height: 50px;
+	padding: 10px;
 }
+
+article .title {
+	font-family: ArchitectsDaughter;
+	letter-spacing: 0.1em;
+}
+
+article p {
+	font-family: CodeNewRoman;
+}
+
+article:hover {
+	cursor: pointer;
+	background-color: #dfdfdf;
+}
+
+/* Side panel */
 
 aside {
 	position: absolute;
 	display: inline-block;
 	width: 100px;
 }
+
+/* Footer */
 
 footer {
 	padding: 50px 10px 40px 10px;
@@ -115,18 +258,56 @@ footer > p {
 	font-weight: 400;
 }
 
-div.button {
-	text-align: center;
-	margin: 10px 0 20px 0;
+/* Other stuff */
+
+.nodisplay {
+	display: none;
 }
 
-.button p {
-	border-radius: 4px;
-	border-color: #989898;
-	border-style: outset;
-	display: inline-block;
-	border-width: 1px;
-	padding: 15px;
-	background: #e9e9e9;
-	font-variant: all-small-caps;
+.link {
+	cursor: pointer;
+}
+
+/* Spinner */
+
+.spinner
+{
+	vertical-align: middle;
+	width: 19px;
+	height: 19px;
+	/*stroke: black;*/
+	stroke-width: 2;
+	fill: transparent;
+	-webkit-transition-property: -webkit-transform;
+	-webkit-transition-duration: 1.2s;
+	-webkit-animation-name: rotate;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+
+	-moz-transition-property: -moz-transform;
+	-moz-animation-name: rotate;
+	-moz-animation-duration: 1.2s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-timing-function: linear;
+
+	transition-property: transform;
+	animation-name: rotate;
+	animation-duration: 1.2s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotate {
+	from {-webkit-transform: rotate(0deg);}
+	to {-webkit-transform: rotate(360deg);}
+}
+
+@-moz-keyframes rotate {
+	from {-moz-transform: rotate(0deg);}
+	to {-moz-transform: rotate(360deg);}
+}
+
+@keyframes rotate {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(360deg);}
 }

@@ -20,7 +20,7 @@ namespace LaRouxOf;
 # larouxof.ph/api/ItemId/085472/getPrice
 
 // We do not want anything to be sent to the client except a valid JSON response so buffer all output.
-ob_start();
+ob_start("ob_gzhandler");
 
 // Enable autoloading of classes.
 function my_autoloader($class) {
@@ -36,7 +36,7 @@ try
     if(($path = Functions::splitCall($call, 'api')) == null) throw new Exception("wrong formatted request URI");
     
     // Execute the real API call.
-    $response = Functions::executeCall($path);
+    $response = Functions::executeCall(Database::connect(), $path);
     
     // If the call returns an object, make sure it is serializable.
     if(is_object($response) && !($response instanceof JsonSerializable)) throw new Exception("object does not implement `JsonSerializable`");
