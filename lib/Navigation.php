@@ -18,6 +18,7 @@ final class Navigation
 		{
 			echo "\nPDO error: " . $this->connection->errorCode() . "\n" . $this->connection->errorInfo()[2];
 		}
+		$this->pages = array();
 		foreach($result as $p)
 		{
 			array_push($this->pages, new $p['category']($p['id'], $p['title'], $p['link']));
