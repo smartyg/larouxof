@@ -44,7 +44,7 @@ final class Galery implements iWebpage
 	{
 		$path = Functions::splitCalls($link);
 		if(count($path) != 1) throw new Exception();
-		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link_name = :link";
+		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link = :link";
 		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		if($sth === false)
 		{
