@@ -46,6 +46,10 @@ final class Galery implements iWebpage
 		if(count($path) != 1) throw new Exception();
 		$sql = "SELECT id, title, link FROM pages WHERE category = 'Galary' AND link_name = :link";
 		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) != 1) throw Exception;
@@ -71,6 +75,10 @@ final class Galery implements iWebpage
 		$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY :column :order LIMIT :start, :number";
 		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number, ':column' => $sort, ':order' => $order));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) > $number) throw Exception;
 		if(count($res) == 0) return null;

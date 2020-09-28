@@ -46,6 +46,10 @@ final class Page implements iWebpage
 		if(count($path) != 1) throw new Exception();
 		$sql = "SELECT id, title, link FROM pages WHERE category = 'Page' AND link_name = :link";
 		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) != 1) throw Exception;
@@ -62,6 +66,10 @@ final class Page implements iWebpage
 	{
 		$sql = "SELECT content FROM content WHERE page_id = :id";
 		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
 		$sth->execute(array(':id' => $this->id));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 		if(count($res) != 1) throw Exception;
