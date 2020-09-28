@@ -22,7 +22,7 @@ final class Navigation
 		foreach($result as $p)
 		{
 			$class = __NAMESPACE__ . '\\' . $p['category'];
-			array_push($this->pages, new $class($p['id'], $p['title'], $p['link']));
+			array_push($this->pages, new $class($p['id'], $p['title'], $p['link'], $connection));
 		}
 	}
 
