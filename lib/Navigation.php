@@ -1,5 +1,7 @@
 <?php
 
+namespace LaRouxOf;
+
 final class Navigation
 {
 	private PDO $connection;
