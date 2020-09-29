@@ -3,6 +3,7 @@
 namespace LaRouxOf;
 
 use PDO;
+use Exception;
 
 final class Page implements iWebpage
 {
@@ -11,7 +12,7 @@ final class Page implements iWebpage
 	private string $link;
 	private PDO $connection;
 
-	function __construct(int $id, string $title, string $link, $connection)
+	function __construct(int $id, string $title, string $link, PDO $connection)
 	{
 		$this->id = $id;
 		$this->title = $title;
@@ -21,7 +22,8 @@ final class Page implements iWebpage
 
 	public function getLink(): string
 	{
-		$var = static::class . '/' . $this->link;
+		$class = substr(static::class, strlen(__NAMESPACE__) + 1);
+		$var = $class . '/' . $this->link;
 		return $var;
 	}
 
@@ -32,7 +34,7 @@ final class Page implements iWebpage
 
 	public function getCategory(): string
 	{
-		return static::class;
+		return substr(static::class, strlen(__NAMESPACE__) + 1);
 	}
 
 	public function isDynamicLoadable(): bool

@@ -2,23 +2,23 @@
 
 namespace LaRouxOf\Test;
 
-require_once __DIR__ . "/iDatabaseTester.php";
-
 use PDO;
 
-class DatabaseTester implements iDatabaseTester
+class DatabaseTester
 {
     // only instantiate pdo once for test clean-up/fixture load
     private ?PDO $conn = null;
+    private array $tables = [];
 
     public function __construct()
     {
 		$this->conn = new PDO('sqlite::memory:');
+		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public function getPDO(): PDO
     {
-        return $this->conn();
+        return $this->conn;
     }
 
     private static function transform(array $in): array
@@ -29,8 +29,19 @@ class DatabaseTester implements iDatabaseTester
 		{
 			$key = ':field' . $n;
 			$out += [$key => $value];
+			$n++;
 		}
 		return $out;
+    }
+
+    public function clear(): void
+    {
+		foreach($this->tables as $table)
+		{
+			$sql = 'DROP TABLE IF EXISTS ' . $table . ';';
+			$this->conn->query($sql);
+		}
+		$this->tables = array();
     }
 
     public function loadCSVTable(string $name, string $file): void
@@ -50,12 +61,10 @@ class DatabaseTester implements iDatabaseTester
 						if($n > 0) $insert_fields .= ',';
 						$insert_fields .= ':field' . $n;
 					}
-					$sql = 'CREATE TABLE ' . $name . ' (' . $insert_fields . ');';
-					$insert = self::transform($parts);
-					$sth = $this->conn->prepare($sql);
-					$sth->execute($insert);
-
+					$sql = 'CREATE TABLE ' . $name . ' (' . join($parts, ',') . ');';
+					$sth = $this->conn->query($sql);
 					$firstline = false;
+					$this->tables[] = $name;
 				}
 				else
 				{

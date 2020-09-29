@@ -1,8 +1,6 @@
 <?php
 namespace LaRouxOf\Test;
 
-require_once __DIR__ . "/../../vendor/autoload.php";
-#require_once __DIR__ . "/../../src/settings.php";
 require_once __DIR__ . "/../../lib/iLinkable.php";
 require_once __DIR__ . "/../../lib/iWebpage.php";
 require_once __DIR__ . "/../../lib/Page.php";
