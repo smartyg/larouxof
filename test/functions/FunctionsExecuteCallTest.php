@@ -3,13 +3,13 @@ namespace LaRouxOf\Test;
 
 require_once __DIR__ . "/../../vendor/autoload.php";
 #require_once __DIR__ . "/../../src/settings.php";
-require_once __DIR__ . "/../../src/classes/iLinkable.php";
-require_once __DIR__ . "/../../src/classes/iWebpage.php";
-require_once __DIR__ . "/../../src/classes/Page.php";
-require_once __DIR__ . "/../../src/classes/Gallery.php";
-require_once __DIR__ . "/../../src/classes/Item.php";
-require_once __DIR__ . "/../../src/classes/Database.php";
-require_once __DIR__ . "/../../src/classes/Functions.php";
+require_once __DIR__ . "/../../lib/iLinkable.php";
+require_once __DIR__ . "/../../lib/iWebpage.php";
+require_once __DIR__ . "/../../lib/Page.php";
+require_once __DIR__ . "/../../lib/Gallery.php";
+require_once __DIR__ . "/../../lib/Item.php";
+require_once __DIR__ . "/../../lib/Database.php";
+require_once __DIR__ . "/../../lib/Functions.php";
 require_once __DIR__ . "/FunctionsClass.php";
 
 use LaRouxOf\Functions;
