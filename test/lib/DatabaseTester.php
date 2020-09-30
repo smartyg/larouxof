@@ -61,7 +61,7 @@ class DatabaseTester
 						if($n > 0) $insert_fields .= ',';
 						$insert_fields .= ':field' . $n;
 					}
-					$sql = 'CREATE TABLE ' . $name . ' (' . join($parts, ',') . ');';
+					$sql = 'CREATE TABLE ' . $name . ' (' . implode(',', $parts) . ');';
 					$sth = $this->conn->query($sql);
 					$firstline = false;
 					$this->tables[] = $name;
