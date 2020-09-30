@@ -54,7 +54,7 @@ final class Page implements iWebpage
 		}
 		$sth->execute(array(':link' => $path[0]));
 		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
+		if(count($res) != 1) throw new Exception;
 		$instance = new self($res[0]['id'], $res[0]['title'], $res[0]['link'], $connection);
 		return $instance;
 	}
@@ -62,6 +62,21 @@ final class Page implements iWebpage
 	public static function loadPage(PDO $connection, string $link): self
 	{
 		return self::loadByUI($connection, $link);
+	}
+
+	public static function loadById(PDO $connection, int $id): self
+	{
+		$sql = "SELECT id, title, link FROM pages WHERE category = 'Page' AND id = :id";
+		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
+		$sth->execute(array(':id' => $id));
+		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if(count($res) != 1) throw new Exception;
+		$instance = new self($res[0]['id'], $res[0]['title'], $res[0]['link'], $connection);
+		return $instance;
 	}
 
 	public function toHTML(): string

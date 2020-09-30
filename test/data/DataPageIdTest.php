@@ -13,7 +13,7 @@ require_once __DIR__ . "/../lib/DatabaseTester.php";
 
 use LaRouxOf\Functions;
 
-class TestDataPage extends \PHPUnit\Framework\TestCase
+class TestDataPageId extends \PHPUnit\Framework\TestCase
 {
 	private static $conn = null;
 
@@ -32,17 +32,16 @@ class TestDataPage extends \PHPUnit\Framework\TestCase
         self::$conn->clear();
     }
 
-
     public static function tearDownAfterClass(): void
     {
          self::$conn->close();
          self::$conn = null;
     }
 
-	public function testPageGetTitle0()
+	public function testPageIdGetTitle0()
 	{
-		$path[] = 'Page';
-		$path[] = 'Welcome';
+		$path[] = 'PageId';
+		$path[] = '0';
 		$path[] = 'getTitle';
 		$result = Functions::executeCall(self::$conn->getPDO(), $path);
 
@@ -50,15 +49,15 @@ class TestDataPage extends \PHPUnit\Framework\TestCase
 		$this->assertEquals('Welcome', $result);
 	}
 
-	public function testPageGetLink0()
+	public function testPageIdGetTitle1()
 	{
-		$path[] = 'Page';
-		$path[] = 'Welcome';
-		$path[] = 'getLink';
+		$path[] = 'PageId';
+		$path[] = '1';
+		$path[] = 'getTitle';
 		$result = Functions::executeCall(self::$conn->getPDO(), $path);
 
 		$this->assertIsString($result);
-		$this->assertEquals('Page/Welcome', $result);
+		$this->assertEquals('Order', $result);
 	}
 }
 ?>

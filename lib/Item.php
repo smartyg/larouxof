@@ -83,6 +83,21 @@ final class Item implements iLinkable
 		return $instance;
 	}
 
+	public static function loadById(PDO $connection, int $id): self
+	{
+		$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE items.id = :id";
+		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		if($sth === false)
+		{
+			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		}
+		$sth->execute(array(':id' => id));
+		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+		if(count($res) != 1) throw Exception;
+		$instance = new self($connection, $res[0]);
+		return $instance;
+	}
+
 	public function toHTML(): string
 	{
 		$html = "";

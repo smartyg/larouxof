@@ -13,7 +13,7 @@ abstract class Functions
 	final public static function splitCall(string $call, string $module = ""): ?array
 	{
 		$path = explode('/', $call);
-		if(empty($path[0])) $path = array_slice($path, 1);
+		if(isset($path[0]) && ($path[0] == "" || $path[0] === false)) $path = array_slice($path, 1);
 		if($module != "")
 		{
 			if($path[0] == $module)
@@ -21,7 +21,7 @@ abstract class Functions
 			else
 				return null;
 		}
-		if(count($path) > 0 && empty(end($path))) array_pop($path);
+		if(count($path) > 0 && (end($path) == "" || end($path) === false)) array_pop($path);
 		return $path;
 	}
 

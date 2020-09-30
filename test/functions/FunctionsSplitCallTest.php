@@ -134,5 +134,18 @@ class TestFunctionsSplitCall extends \PHPUnit\Framework\TestCase
 		$this->assertCount($num_expect, $result);
 		$this->assertEquals($expect, $result);
 	}
+
+	public function testFunctionsSplitCall10()
+	{
+		$str = '0';
+		$num_expect = 1;
+		$expect[] = '0';
+
+		$result = Functions::splitCall($str);
+
+		$this->assertIsArray($result);
+		$this->assertCount($num_expect, $result);
+		$this->assertEquals($expect, $result);
+	}
 }
 ?>
