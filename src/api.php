@@ -23,10 +23,12 @@ namespace LaRouxOf;
 ob_start("ob_gzhandler");
 
 // Enable autoloading of classes.
-function my_autoloader($class) {
-    include 'classes/' . $class . '.php';
+function autoloader(string $class) {
+	$file = str_replace(__NAMESPACE__ . '\\', '../lib/', $class);
+	$file = str_replace('\\', '/', $file);
+	include $file . '.php';
 }
-spl_autoload_register('my_autoloader');
+spl_autoload_register(__NAMESPACE__ . '\autoloader');
 
 $call = $_SERVER['REQUEST_URI'];
 
