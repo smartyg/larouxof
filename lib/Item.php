@@ -3,8 +3,9 @@
 namespace LaRouxOf;
 
 use PDO;
+use PDOException;
 
-final class Item implements iLinkable
+final class Item implements iWebpage
 {
 	private int $id;
 	private string $name;
@@ -42,8 +43,8 @@ final class Item implements iLinkable
 
 	public function getLink(): string
 	{
-		$var = static::class . '/' . $this->page_link . '/' . $this->link;
-		return $var;
+		$class = substr(static::class, strlen(__NAMESPACE__) + 1);
+		return '/' . $class . '/' . $this->page_link . '/' . $this->link;
 	}
 
 	public function getTitle(): string
@@ -64,38 +65,42 @@ final class Item implements iLinkable
 	public static function loadByUI(PDO $connection, string $link): self
 	{
 		$path = Functions::splitCalls($link);
-		if(count($path) != 1) throw new Exception();
+		if(count($path) != 1) throw new InternalException(InternalException::I_ARGUMENTS, self::class . ' requires one argument, ' . $count($path) . ' are given.');
 		return self::loadItem($path[0], $path[1], $connection);
 	}
 
 	public static function loadItem(PDO $connection, string $page_link, string $link): self
 	{
-		$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE pages.link = :page_link AND items.link = :link";
-		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		if($sth === false)
-		{
-			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		try {
+			$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE pages.link = :page_link AND items.link = :link";
+			$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$sth->execute(array(':page_link' => $page_link, ':link' => $link));
+			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+			if(count($res) == 0) throw InternalException(InternalException::I_ITEM_NOT_EXIST, 'Item with the name ' . $link . ' does not exists.');
+			elseif(count($res) > 1) throw InternalException(InternalException::I_QUERY, 'Query for page ' . $link . ' returned too many results.');
+			$instance = new self($connection, $res[0]);
+			return $instance;
 		}
-		$sth->execute(array(':page_link' => $page_link, ':link' => $link));
-		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
-		$instance = new self($connection, $res[0]);
-		return $instance;
+		catch (PDOException $e) {
+			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+		}
 	}
 
 	public static function loadById(PDO $connection, int $id): self
 	{
-		$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE items.id = :id";
-		$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		if($sth === false)
-		{
-			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		try {
+			$sql = "SELECT items.id as id, items.name as name, short_description, long_description, price, image_reference, item.link as link, pages.link as page_link, pages.title as page_title FROM items INNER JOIN pages ON items.page_id=pages.id WHERE items.id = :id";
+			$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$sth->execute(array(':id' => id));
+			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+			if(count($res) == 0) throw InternalException(InternalException::I_ITEM_NOT_EXIST, 'Item with the name ' . $link . ' does not exists.');
+			elseif(count($res) > 1) throw InternalException(InternalException::I_QUERY, 'Query for page ' . $link . ' returned too many results.');
+			$instance = new self($connection, $res[0]);
+			return $instance;
 		}
-		$sth->execute(array(':id' => id));
-		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw Exception;
-		$instance = new self($connection, $res[0]);
-		return $instance;
+		catch (PDOException $e) {
+			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+		}
 	}
 
 	public function toHTML(): string
@@ -123,16 +128,19 @@ final class Item implements iLinkable
 
 	public function getImage(int $number): string
 	{
-		$sql = "SELECT image_reference FROM images WHERE item_id = :id ORDER BY image_reference LIMIT :start, 1";
-		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		if($sth === false)
-		{
-			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		try {
+			$sql = "SELECT image_reference FROM images WHERE item_id = :id ORDER BY image_reference LIMIT :start, 1";
+			$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$sth->execute(array(':id' => $id, ':start' => $number));
+			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+			if(count($res) != 1) throw new Exception();
+			if(count($res) == 0) return null;
+			elseif(count($res) > 1) throw new InternalException(InternalException::I_QUERY, 'Query for image ' . $id . ' returned too many results.');
+			return $res[0]['image_reference'];
 		}
-		$sth->execute(array(':id' => $id, ':start' => $number));
-		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw new Exception();
-		return $res[0]['image_reference'];
+		catch (PDOException $e) {
+			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+		}
 	}
 
 	public function getPrice(): float
@@ -142,16 +150,18 @@ final class Item implements iLinkable
 
 	public function getNumOfImage(): int
 	{
-		$sql = "SELECT count(image_reference) as number FROM images WHERE item_id = :id";
-		$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-		if($sth === false)
-		{
-			echo "\nPDO error: " . $connection->errorCode() . "\n" . $connection->errorInfo()[2];
+		try {
+			$sql = "SELECT count(image_reference) as number FROM images WHERE item_id = :id";
+			$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$sth->execute(array(':id' => $id));
+			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+			if(count($res) == 0) return 0;
+			elseif(count($res) > 1) throw new InternalException(InternalException::I_QUERY, 'Query for number of images ' . $id . ' returned too many results.');
+			return $res[0]['number'];
 		}
-		$sth->execute(array(':id' => $id));
-		$res = $sth->fetchAll(PDO::FETCH_ASSOC);
-		if(count($res) != 1) throw new Exception();
-		return $res[0]['number'];
+		catch (PDOException $e) {
+			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+		}
 	}
 
 	public function getId(): int

@@ -10,12 +10,18 @@
 		<testsuite name="data-handling-SQLite">
 			<directory suffix="Test.php">./data-sqlite</directory>
 		</testsuite>
+		<testsuite name="data-handling-mariaDB">
+			<directory suffix="Test.php">./data-mariadb</directory>
+		</testsuite>
+		<testsuite name="webserver-calls">
+			<directory suffix="Test.php">./webserver</directory>
+		</testsuite>
 	</testsuites>
 	<coverage includeUncoveredFiles="true"
-		processUncoveredFiles="true"
-		pathCoverage="true"
-		ignoreDeprecatedCodeUnits="false"
-		disableCodeCoverageIgnore="false">
+		   processUncoveredFiles="true"
+		   pathCoverage="true"
+		   ignoreDeprecatedCodeUnits="false"
+		   disableCodeCoverageIgnore="false">
 		<include>
 			<directory suffix=".php">../lib</directory>
 		</include>

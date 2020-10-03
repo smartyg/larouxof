@@ -3,7 +3,8 @@
 namespace LaRouxOf;
 
 // We do not want anything to be sent to the client except a valid JSON response so buffer all output.
-ob_start("ob_gzhandler");
+//ob_start("ob_gzhandler");
+ob_start();
 
 error_reporting(E_ALL);
 
@@ -34,9 +35,12 @@ ob_clean();
 <meta name="keywords" content="bags, shoes, clothes">
 <meta name="author" content="Martijn Goedhart">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="scripts/js/jquery-3.5.1.js"></script>
-<script src="scripts/js/main.js"></script>
-<link rel="stylesheet" href="styles/main.css">
+<script src="/scripts/js/jquery-3.5.1.js"></script>
+<script src="/scripts/js/main.js"></script>
+<script>
+var page_link = '<?php echo $page->getLink() ?>';
+</script>
+<link rel="stylesheet" href="/styles/main.css">
 <title>La Roux Of - <?php echo $page->getTitle(); ?></title>
 </head>
 <body>
@@ -45,7 +49,7 @@ ob_clean();
 </header>
 <nav>
 <?php
-foreach($navigation-getNavigation() as $nav)
+foreach($navigation->getNavigation() as $nav)
 {
 	if($nav->getLink() == $page->getLink())
 	{

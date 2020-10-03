@@ -20,7 +20,12 @@ class DatabaseTester
     {
         return $this->conn;
     }
-
+/*
+    private static function throwPDOError(PDO $conn): void
+    {
+		echo "\nPDO error " . $conn->errorInfo()[0] . " (" . $conn->errorInfo()[1] . ")\n" . $conn->errorInfo()[2] . "\n";
+    }
+*/
     private static function transform(array $in): array
     {
 		$out = array();
@@ -63,6 +68,7 @@ class DatabaseTester
 					}
 					$sql = 'CREATE TABLE ' . $name . ' (' . implode(',', $parts) . ');';
 					$sth = $this->conn->query($sql);
+					//if($sth === false) self::throwPDOError($this->conn);
 					$firstline = false;
 					$this->tables[] = $name;
 				}
@@ -73,6 +79,7 @@ class DatabaseTester
 					$sql = 'INSERT INTO ' . $name . ' VALUES (' . $insert_fields . ');';
 					$insert = self::transform($parts);
 					$sth = $this->conn->prepare($sql);
+					//if($sth === false) self::throwPDOError($this->conn);
 					$sth->execute($insert);
 				}
 			}

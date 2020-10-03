@@ -1,16 +1,12 @@
 <?php
+
 namespace LaRouxOf\Test;
 
-require_once __DIR__ . "/../../lib/iLinkable.php";
-require_once __DIR__ . "/../../lib/iWebpage.php";
-require_once __DIR__ . "/../../lib/Page.php";
-require_once __DIR__ . "/../../lib/Gallery.php";
-require_once __DIR__ . "/../../lib/Item.php";
-require_once __DIR__ . "/../../lib/Database.php";
-require_once __DIR__ . "/../../lib/Functions.php";
+require_once __DIR__ . "/../autoloader.php";
 require_once __DIR__ . "/FunctionsClass.php";
 
 use LaRouxOf\Functions;
+use LaRouxOf\InternalException;
 
 class TestFunctionsExecuteCall extends \PHPUnit\Framework\TestCase
 {
@@ -64,7 +60,7 @@ class TestFunctionsExecuteCall extends \PHPUnit\Framework\TestCase
 		$pdoMock->method('query')
                 ->will($this->throwException(new \Exception()));
 
-		$this->expectException(\Exception::class);
+		$this->expectException(InternalException::class);
 		$expect[] = 'TestClass';
 		$expect[] = 'test';
 		$expect[] = 'NonExistingMethod';
@@ -82,7 +78,7 @@ class TestFunctionsExecuteCall extends \PHPUnit\Framework\TestCase
 		$pdoMock->method('query')
                 ->will($this->throwException(new \Exception()));
 
-		$this->expectException(\Exception::class);
+		$this->expectException(InternalException::class);
 		$expect[] = 'NonExistingClass';
 		$expect[] = 'test';
 		$expect[] = 'NonExistingMethod';
