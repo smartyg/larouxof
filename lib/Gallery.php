@@ -5,12 +5,11 @@ namespace LaRouxOf;
 use PDO;
 use PDOException;
 
-final class Gallery implements iWebpage, iNavigable
+final class Gallery extends baseWebpage implements iNavigable, iApi
 {
 	private string $title;
 	private int $id;
 	private string $link;
-	private PDO $connection;
 
 	public function __construct(int $id, string $title, string $link, PDO $connection)
 	{
@@ -41,7 +40,12 @@ final class Gallery implements iWebpage, iNavigable
 		return true;
 	}
 
-	public static function loadByUI(PDO $connection, string $link): self
+	public static function apiMethods(): array
+	{
+		return array();
+	}
+
+	public static function loadClass(PDO $connection, string $link): self
 	{
 		try {
 			$path = Functions::splitCall($link);
@@ -62,10 +66,10 @@ final class Gallery implements iWebpage, iNavigable
 
 	public static function loadGallery(PDO $connection, string $link): self
 	{
-		return self::loadByUI($connection, $link);
+		return self::loadClass($connection, $link);
 	}
 
-	public function toHTML(): string
+	public function getContent(): string
 	{
 		$html = '<div class="button top">';
 		$html .= '<select name="sort" id="sort">';
@@ -97,9 +101,9 @@ final class Gallery implements iWebpage, iNavigable
 		if(!in_array($order, array('ASC', 'DESC'))) $order = 'ASC';
 
 		try {
-			$sql = "SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY :column :order LIMIT :start, :number";
+			$sql = 'SELECT id, name, short_description, price, image_reference, link FROM items WHERE page_id = :p_id ORDER BY :column ' . $order . ' LIMIT :start, :number';
 			$sth = $this->connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-			$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number, ':column' => $sort, ':order' => $order));
+			$sth->execute(array(':p_id' => $this->id, ':start' => $start, ':number' => $number, ':column' => $sort));
 			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
 			if(count($res) > $number) throw InternalException(InternalException::I_QUERY, 'Query for items returned too many results.');
 			if(count($res) == 0) return null;
@@ -111,7 +115,7 @@ final class Gallery implements iWebpage, iNavigable
 			return $items;
 		}
 		catch (PDOException $e) {
-			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+			throw new InternalException(InternalException::I_QUERY, 'PDO failed: ' . $e->getMessage(), $e);
 		}
 	}
 }

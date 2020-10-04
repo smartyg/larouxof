@@ -5,12 +5,11 @@ namespace LaRouxOf;
 use PDO;
 use PDOException;
 
-final class Page implements iWebpage, iNavigable
+final class Page extends baseWebpage implements iNavigable, iApi, iAdmin
 {
 	private string $title;
 	private int $id;
 	private string $link;
-	private PDO $connection;
 
 	public function __construct(int $id, string $title, string $link, PDO $connection)
 	{
@@ -20,10 +19,15 @@ final class Page implements iWebpage, iNavigable
 		$this->connection = $connection;
 	}
 
-	public function getLink(): string
+	public static function getName(): string
 	{
 		$class = substr(static::class, strlen(__NAMESPACE__) + 1);
-		return '/' . $class . '/' . $this->link;
+		return '/' . $class;
+	}
+
+	public function getLink(): string
+	{
+		return '/' . self::getName() . '/' . $this->link;
 	}
 
 	public function getTitle(): string
@@ -41,7 +45,12 @@ final class Page implements iWebpage, iNavigable
 		return false;
 	}
 
-	public static function loadByUI(PDO $connection, string $link): self
+	public static function apiMethods(): array
+	{
+		return array();
+	}
+
+	public static function loadClass(PDO $connection, string $link): self
 	{
 		try {
 			$path = Functions::splitCall($link);
@@ -62,7 +71,7 @@ final class Page implements iWebpage, iNavigable
 
 	public static function loadPage(PDO $connection, string $link): self
 	{
-		return self::loadByUI($connection, $link);
+		return self::loadClass($connection, $link);
 	}
 
 	public static function loadById(PDO $connection, int $id): self
@@ -82,7 +91,7 @@ final class Page implements iWebpage, iNavigable
 		}
 	}
 
-	public function toHTML(): string
+	public function getContent(): string
 	{
 		try {
 			$sql = "SELECT content FROM content WHERE page_id = :id";
@@ -96,6 +105,43 @@ final class Page implements iWebpage, iNavigable
 		catch (PDOException $e) {
 			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
 		}
+	}
+
+	public static function apiAdminMethods(): array
+	{
+		return array_merge(self::apiMethods(), array('loadEditRecords', 'newRecord', 'changeRecord'));
+	}
+
+	public static function getAdminFields(): AdminDefinition
+	{
+		return (new AdminDefinition())
+			->addField('id', AdminDefinition::_NO_EDIT | AdminDefinition::_HIDDEN)
+			->addField('title', AdminDefinition::_STRING | AdminDefinition::_REQUIRED | AdminDefinition::_FILTERABLE)
+			->addField('content', AdminDefinition::_WYSIWYG | AdminDefinition::_REQUIRED | AdminDefinition::_EXTENDED);
+	}
+
+	public static function loadEditRecords(PDO $connection): array
+	{
+		try {
+			$sql = "SELECT id, title, link, content.content as content FROM pages LEFT JOIN content ON pages.id = content.page_id WHERE category = 'Page'";
+			$sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			$sth->execute();
+			$res = $sth->fetchAll(PDO::FETCH_ASSOC);
+			return $res;
+		}
+		catch (PDOException $e) {
+			throw new InternalException(InternalException::I_QUERY, "PDO failed", $e);
+		}
+	}
+
+	public static function newRecord(PDO $connection, array $record): bool
+	{
+		return true;
+	}
+
+	public static function changeRecord(PDO $connection, array $record): bool
+	{
+		return true;
 	}
 }
 

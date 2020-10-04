@@ -83,13 +83,13 @@ $(document).ready(function(){
 });
 
 function loadItems(start, sort, order) {
-	//if(loading) return;
-	//else loading = true;
+	if(loading) return;
+	else loading = true;
 	toggleLoadingSpinner(true);
 	//alert("loadItems(" + start + ", " + sort + ", " + order + ")");
 	//return;
 	//var url = "/api/" + page_type + "/" + page_link + "/loadItems/" + start + '/' + num_items_per_load + '/' + sort + '/' + order;
-	var url = "/api.php" + page_link + "/loadItems/" + start + '/' + num_items_per_load + '/' + sort + '/' + order;
+	var url = "/Api" + page_link + "/loadItems/" + start + '/' + num_items_per_load + '/' + sort + '/' + order;
 	$.get(url, function(data) {
 		alert("loaded");
 		toggleLoadingSpinner(false);

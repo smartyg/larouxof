@@ -5,7 +5,7 @@ namespace LaRouxOf;
 use PDO;
 use PDOException;
 
-final class Item implements iWebpage
+final class Item extends baseWebpage implements iNavigable, iApi
 {
 	private int $id;
 	private string $name;
@@ -16,7 +16,6 @@ final class Item implements iWebpage
 	private string $link;
 	private string $page_link;
 	private string $page_title;
-	private PDO $connection;
 
 	function __construct(array $input, PDO $connection)
 	{
@@ -62,10 +61,15 @@ final class Item implements iWebpage
 		return false;
 	}
 
-	public static function loadByUI(PDO $connection, string $link): self
+	public static function apiMethods(): array
+	{
+		return array();
+	}
+
+	public static function loadClass(PDO $connection, string $link): self
 	{
 		$path = Functions::splitCalls($link);
-		if(count($path) != 1) throw new InternalException(InternalException::I_ARGUMENTS, self::class . ' requires one argument, ' . $count($path) . ' are given.');
+		if(count($path) != 2) throw new InternalException(InternalException::I_ARGUMENTS, self::class . ' requires two argument, ' . $count($path) . ' are given.');
 		return self::loadItem($path[0], $path[1], $connection);
 	}
 
@@ -103,7 +107,7 @@ final class Item implements iWebpage
 		}
 	}
 
-	public function toHTML(): string
+	public function getContent(): string
 	{
 		$html = "";
 		$html .= '<img src="" alt="' . $this->name . '"></img>';

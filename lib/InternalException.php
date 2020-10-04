@@ -35,7 +35,8 @@ final class InternalException extends Exception
 	const I_ARGUMENTS = self::_REQUEST | 1 << 4;
 	const I_NO_DB = self::_INTERNAL | 1 << 4;
 	const I_QUERY = self::_INTERNAL | 2 << 4;
-	const I_UNKNOWN = self::_INTERNAL | 3 << 4;
+	const I_PARENT_NOT_CALLED = self::_INTERNAL | 3 << 4;
+	const I_UNKNOWN = self::_INTERNAL | 4 << 4;
 
 	private int $internal_code;
 
