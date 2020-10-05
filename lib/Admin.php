@@ -11,7 +11,7 @@ class Admin implements iOutput
 	private ?string $call = null;
 	private ?string $admin_obj = null;
 	private ?string $admin_obj_name = null;
-	private string $fields_json = "";
+	private string $fields_json = '';
 
 	function __construct(PDO $connection, string $call, array $path)
 	{
@@ -50,7 +50,7 @@ class Admin implements iOutput
 		$this->admin_obj_name = $this->admin_obj::getName();
 
 		$def = $this->admin_obj::getAdminFields()->getDefinition();
-		$this->fields_json = json_encode($def);
+		$this->fields_json = $this->admin_obj::getAdminFields();
 
 		$this->js_format = "";
 		$this->filter = "";
@@ -81,7 +81,7 @@ class Admin implements iOutput
 <script>
 $(document).ready(function(){
 	var object = '<?php echo $this->admin_obj_name; ?>';
-	var fields = '<?php echo $this->fields_json; ?>';
+	var fields = <?php echo $this->fields_json; ?>;
 	$("article").click(function(ev) {
 		//alert("hoi");
 		$("article > p.long-description").addClass("nodisplay");

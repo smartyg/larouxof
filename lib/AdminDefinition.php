@@ -28,20 +28,32 @@ class AdminDefinition
 	const MASK_OPTIONS = ~ self::MASK_DATA_TYPE;
 
 	private array $definition = [];
+	private array $definitionJS = [];
 
 	public function __construct()
 	{
 	}
 
-	public function addField(string $name, int $type): self
+	public function addField(string $name, int $type, ?string $hint = null, ?string $tooltip = null): self
 	{
-		$this->definition[] = array('name' => $name, 'type' => $type);
+		$this->definition[] = array('name' => $name, 'type' => $type, 'hint' => $hint, 'tooltip' => $tooltip);
+		$this->definitionJS[$name] = array('name' => $name, 'type' => $type, 'hint' => $hint, 'tooltip' => $tooltip);
 		return $this;
 	}
 
 	public function getDefinition(): array
 	{
 		return $this->definition;
+	}
+
+	public function getDefinitionJS(): array
+	{
+		return $this->definitionJS;
+	}
+
+	public function __toString(): string
+	{
+		return json_encode($this->definitionJS);
 	}
 }
 
